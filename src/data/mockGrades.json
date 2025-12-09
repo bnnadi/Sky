@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "subject": "Mathematics",
+    "teacher": "Mr. Daniels",
+    "grade": "A",
+    "percentage": 95,
+    "semester": "Fall 2024",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": "2",
+    "subject": "Science",
+    "teacher": "Ms. Patel",
+    "grade": "B+",
+    "percentage": 88,
+    "semester": "Fall 2024",
+    "lastUpdated": "2024-01-14"
+  },
+  {
+    "id": "3",
+    "subject": "History",
+    "teacher": "Mr. Alvarez",
+    "grade": "A-",
+    "percentage": 92,
+    "semester": "Fall 2024",
+    "lastUpdated": "2024-01-13"
+  },
+  {
+    "id": "4",
+    "subject": "English Literature",
+    "teacher": "Ms. Johnson",
+    "grade": "B",
+    "percentage": 85,
+    "semester": "Fall 2024",
+    "lastUpdated": "2024-01-12"
+  },
+  {
+    "id": "5",
+    "subject": "Physical Education",
+    "teacher": "Coach Martinez",
+    "grade": "A",
+    "percentage": 98,
+    "semester": "Fall 2024",
+    "lastUpdated": "2024-01-11"
+  },
+  {
+    "id": "6",
+    "subject": "Art",
+    "teacher": "Ms. Chen",
+    "grade": "A+",
+    "percentage": 100,
+    "semester": "Fall 2024",
+    "lastUpdated": "2024-01-10"
+  }
+]
+
+
+
+
+
+
