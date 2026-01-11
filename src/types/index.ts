@@ -62,17 +62,25 @@ export interface AttendanceData {
   trendMessage: string;
 }
 
+export interface StudentData {}
+
 export type RootStackParamList = {
-  Main: undefined;
+  DrawerNavigator: undefined;
   Dashboard: undefined;
   Grades: undefined;
   Attendance: undefined;
+  StudentInformation: undefined;
 };
 
-export type TabParamList = {
-  Dashboard: undefined;
-  Grades: undefined;
-  Attendance: undefined;
+export type DrawerParamList = {
+  MenuTabs: undefined;
+};
+
+export type MenuTabParamList = {
+  Favorites: undefined;
+  Recent: undefined;
+  FullMenu: undefined;
+  AccountInfo: undefined;
 };
 
 

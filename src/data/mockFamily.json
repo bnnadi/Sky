@@ -1,0 +1,18 @@
+{
+  "address": {
+    "present": 42,
+    "absent": 3,
+    "late": 1,
+    "totalDays": 46,
+    "attendancePercentage": 96
+  },
+  "primaryPhone": "1238675309",
+  "familyID": "654788",
+  "trendMessage": "Attendance improving this month ✅"
+}
+
+
+
+
+
+

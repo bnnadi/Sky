@@ -4,9 +4,9 @@ import {
   Text,
   ScrollView,
   Image,
-  TouchableOpacity,
   RefreshControl
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/useAppStore';
 import { Card } from '../components/Card';
 import mockDashboard from '../data/mockDashboard.json';
@@ -35,22 +35,23 @@ export const DashboardScreen: React.FC = () => {
 
   if (!dashboardData) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6' }}>
         <Text style={{ fontSize: 18, color: '#6B7280' }}>Loading...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   const { student, quickStats, recentActivity } = dashboardData;
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: '#F3F4F6' }}
-      refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
-      }
-    >
-      <View style={{ padding: 20 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+        }
+      >
+        <View style={{ padding: 20 }}>
         {/* Welcome Header */}
         <View style={{
           backgroundColor: '#1E3A8A',
@@ -223,8 +224,9 @@ export const DashboardScreen: React.FC = () => {
             </View>
           ))}
         </Card>
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

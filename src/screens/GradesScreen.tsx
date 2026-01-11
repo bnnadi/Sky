@@ -7,9 +7,11 @@ import {
   RefreshControl,
   TextInput
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/useAppStore';
 import { GradeItem } from '../components/GradeItem';
 import { Card } from '../components/Card';
+import { IconLoader } from '../components/IconLoader';
 import mockGrades from '../data/mockGrades.json';
 import { Grade } from '../types';
 
@@ -68,19 +70,18 @@ export const GradesScreen: React.FC = () => {
 
   if (gradesData.length === 0) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6' }} edges={['top']}>
         <Text style={{ fontSize: 18, color: '#6B7280' }}>Loading grades...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F3F4F6' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
       {/* Header with GPA */}
       <View style={{
         backgroundColor: '#1E3A8A',
-        padding: 20,
-        paddingTop: 40
+        padding: 20
       }}>
         <Text style={{
           fontSize: 24,
@@ -168,12 +169,13 @@ export const GradesScreen: React.FC = () => {
 
         {filteredAndSortedGrades.length === 0 && (
           <Card style={{ alignItems: 'center', paddingVertical: 32 }}>
-            <Text style={{ fontSize: 48, marginBottom: 12 }}>🔍</Text>
+            <IconLoader name="SearchNormal" size={48} color="#9CA3AF" variant="Outline" />
             <Text style={{
               textAlign: 'center',
               color: '#111827',
               fontWeight: '600',
-              fontSize: 16
+              fontSize: 16,
+              marginTop: 12
             }}>
               No grades found.
             </Text>
@@ -187,7 +189,7 @@ export const GradesScreen: React.FC = () => {
           </Card>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
