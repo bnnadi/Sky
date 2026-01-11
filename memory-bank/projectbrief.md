@@ -1,13 +1,13 @@
-# Project Brief: Skyward UX Demo App
+# Project Brief: Sky - Modern Student Portal Mobile App
 
 ## Project Overview
-A modern React Native mobile application that recreates key Skyward student information system screens for UI/UX demonstration purposes. This is a **demo/portfolio project** that showcases modern mobile app design patterns and does not handle real student data.
+A modern React Native mobile application demonstrating contemporary UX patterns for student information systems. This is a **demo/portfolio project** that showcases modern mobile app design patterns and does not handle real student data.
 
 ## Core Purpose
-- Demonstrate modern mobile UI/UX design patterns
-- Recreate Skyward's key student-facing screens (Dashboard, Grades, Attendance)
+- Demonstrate modern mobile UI/UX design patterns for education technology
+- Showcase student portal interfaces (Dashboard, Grades, Attendance)
 - Showcase React Native development capabilities
-- Provide a portfolio piece demonstrating mobile app architecture
+- Provide a portfolio piece demonstrating mobile app architecture for EdTech
 
 ## Key Requirements
 1. **Three Main Screens:**

@@ -1,0 +1,43 @@
+{
+  "summary": {
+    "present": 42,
+    "absent": 3,
+    "late": 1,
+    "totalDays": 46,
+    "attendancePercentage": 96
+  },
+  "monthlyTrend": [
+    { "month": "Sep", "percentage": 94 },
+    { "month": "Oct", "percentage": 96 },
+    { "month": "Nov", "percentage": 95 },
+    { "month": "Dec", "percentage": 98 },
+    { "month": "Jan", "percentage": 96 }
+  ],
+  "recentAbsences": [
+    {
+      "date": "2024-01-10",
+      "subject": "Math",
+      "reason": "Medical appointment",
+      "excused": true
+    },
+    {
+      "date": "2024-01-05",
+      "subject": "Science",
+      "reason": "Family emergency",
+      "excused": true
+    },
+    {
+      "date": "2024-01-02",
+      "subject": "History",
+      "reason": "Unexcused",
+      "excused": false
+    }
+  ],
+  "trendMessage": "Attendance improving this month ✅"
+}
+
+
+
+
+
+

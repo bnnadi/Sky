@@ -1,6 +1,6 @@
-# Skyward UX Demo App
+# Sky - Modern Student Portal Mobile App
 
-A modern, user-friendly React Native demo app recreating key Skyward mobile screens (Dashboard, Grades, Attendance) for UI/UX demonstration purposes.
+A modern, user-friendly React Native mobile application demonstrating contemporary UX patterns for student information systems. Features student dashboard, grade tracking, and attendance monitoring interfaces built with modern mobile development best practices.
 
 ## 🎯 Features
 
@@ -32,7 +32,7 @@ A modern, user-friendly React Native demo app recreating key Skyward mobile scre
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd skyward-ux-demo
+cd sky
 ```
 
 2. Install dependencies:
@@ -91,9 +91,9 @@ npm run web
 
 ## 🔒 Security & Ethics
 
-- **No Real Data**: This app uses only mock data and does not connect to real Skyward APIs
+- **No Real Data**: This app uses only mock data and does not connect to any external APIs or student information systems
 - **Local Storage**: All data is stored locally in JSON files
-- **Demo Purpose**: Designed purely for UI/UX demonstration and redesign showcase
+- **Demo Purpose**: Designed as a portfolio demonstration of modern EdTech mobile development capabilities
 - **Privacy First**: No student data is processed or transmitted
 
 ## 📊 Mock Data
@@ -164,7 +164,7 @@ You can also test the app using the Expo Go app:
 
 ## 📝 License
 
-This project is for demonstration purposes only. Please ensure compliance with Skyward's terms of service and data privacy regulations when using this as a reference for actual implementations.
+This project is a portfolio demonstration showcasing modern React Native development for education technology platforms. Built to demonstrate mobile-first design patterns and modern student portal interfaces. Always follow proper security practices and data privacy regulations (FERPA, COPPA) when working with actual student information systems.
 
 ## 🤝 Contributing
 
@@ -172,7 +172,7 @@ This is a demo project, but suggestions and improvements are welcome! Please ens
 
 ---
 
-**Note**: This app is designed as a UI/UX demonstration and does not handle real student data. Always follow proper security practices and data privacy regulations when working with actual student information systems.
+**Note**: This app is designed as a portfolio demonstration of modern mobile development capabilities for education technology. It does not handle real student data. When working with actual student information systems, always follow proper security practices and data privacy regulations (FERPA, COPPA).
 
 
 

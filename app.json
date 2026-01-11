@@ -15,22 +15,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.skywarduxdemo"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1E3A8A"
-      }
+      },
+      "package": "com.anonymous.skywarduxdemo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     }
   }
 }
-
-
-
-
-
-

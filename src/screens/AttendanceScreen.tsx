@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   RefreshControl
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/useAppStore';
 import { AttendanceChart } from '../components/AttendanceChart';
 import { Card } from '../components/Card';
+import { IconLoader } from '../components/IconLoader';
 import mockAttendance from '../data/mockAttendance.json';
 import { AttendanceData } from '../types';
 
@@ -34,22 +36,23 @@ export const AttendanceScreen: React.FC = () => {
 
   if (!attendanceData) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6' }} edges={['top']}>
         <Text style={{ fontSize: 18, color: '#6B7280' }}>Loading attendance...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   const { summary, monthlyTrend, recentAbsences, trendMessage } = attendanceData;
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: '#F3F4F6' }}
-      refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
-      }
-    >
-      <View style={{ padding: 20 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+        }
+      >
+        <View style={{ padding: 20 }}>
         {/* Header */}
         <View style={{
           backgroundColor: '#1E3A8A',
@@ -247,33 +250,42 @@ export const AttendanceScreen: React.FC = () => {
             backgroundColor: '#F3F4F6',
             borderRadius: 12,
             padding: 16,
-            marginBottom: 12
+            marginBottom: 12,
+            flexDirection: 'row',
+            alignItems: 'center'
           }}>
+            <IconLoader name="Calendar" size={20} color="#1E3A8A" variant="Outline" />
             <Text style={{
               fontSize: 16,
               fontWeight: '500',
-              color: '#1E3A8A'
+              color: '#1E3A8A',
+              marginLeft: 8
             }}>
-              📅 View Full Calendar
+              View Full Calendar
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={{
             backgroundColor: '#F3F4F6',
             borderRadius: 12,
-            padding: 16
+            padding: 16,
+            flexDirection: 'row',
+            alignItems: 'center'
           }}>
+            <IconLoader name="DocumentDownload" size={20} color="#1E3A8A" variant="Outline" />
             <Text style={{
               fontSize: 16,
               fontWeight: '500',
-              color: '#1E3A8A'
+              color: '#1E3A8A',
+              marginLeft: 8
             }}>
-              📊 Download Report
+              Download Report
             </Text>
           </TouchableOpacity>
         </Card>
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
