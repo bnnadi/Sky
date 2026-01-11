@@ -12,6 +12,7 @@ import { useAppStore } from '../store/useAppStore';
 import { GradeItem } from '../components/GradeItem';
 import { Card } from '../components/Card';
 import { IconLoader } from '../components/IconLoader';
+import { SkeletonCard } from '@/components/SkeletonCard';
 import mockGrades from '../data/mockGrades.json';
 import { Grade } from '../types';
 
@@ -68,10 +69,48 @@ export const GradesScreen: React.FC = () => {
     return (total / gradesData.length).toFixed(2);
   }, [gradesData]);
 
-  if (gradesData.length === 0) {
+  if (isLoading || gradesData.length === 0) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6' }} edges={['top']}>
-        <Text style={{ fontSize: 18, color: '#6B7280' }}>Loading grades...</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+        {/* Header Skeleton */}
+        <View style={{ backgroundColor: '#1E3A8A', padding: 20 }}>
+          <SkeletonCard variant="text" width="40%" height={24} style={{ marginBottom: 8 }} />
+          <SkeletonCard variant="text" width="60%" height={16} />
+        </View>
+
+        {/* Search and Filter Skeleton */}
+        <View style={{ padding: 20, paddingBottom: 0 }}>
+          <SkeletonCard variant="card" height={48} style={{ marginBottom: 16 }} />
+          <View style={{ flexDirection: 'row', marginBottom: 16 }}>
+            {[1, 2, 3].map((i) => (
+              <SkeletonCard key={i} variant="card" width={80} height={36} style={{ marginRight: 8, borderRadius: 20 }} />
+            ))}
+          </View>
+        </View>
+
+        {/* Grade Items Skeleton */}
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20, paddingTop: 0 }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <View key={i} style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: 12,
+              padding: 16,
+              marginBottom: 12,
+            }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={{ flex: 1 }}>
+                  <SkeletonCard variant="text" width="60%" height={18} style={{ marginBottom: 8 }} />
+                  <SkeletonCard variant="text" width="50%" height={14} style={{ marginBottom: 4 }} />
+                  <SkeletonCard variant="text" width="40%" height={12} />
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <SkeletonCard variant="card" width={50} height={32} style={{ borderRadius: 20, marginBottom: 4 }} />
+                  <SkeletonCard variant="text" width={40} height={14} />
+                </View>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
       </SafeAreaView>
     );
   }

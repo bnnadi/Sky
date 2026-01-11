@@ -11,6 +11,7 @@ import { useAppStore } from '../store/useAppStore';
 import { AttendanceChart } from '../components/AttendanceChart';
 import { Card } from '../components/Card';
 import { IconLoader } from '../components/IconLoader';
+import { SkeletonCard } from '@/components/SkeletonCard';
 import mockAttendance from '../data/mockAttendance.json';
 import { AttendanceData } from '../types';
 
@@ -34,10 +35,66 @@ export const AttendanceScreen: React.FC = () => {
     }, 1000);
   };
 
-  if (!attendanceData) {
+  if (isLoading || !attendanceData) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6' }} edges={['top']}>
-        <Text style={{ fontSize: 18, color: '#6B7280' }}>Loading attendance...</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+        <ScrollView style={{ flex: 1 }}>
+          <View style={{ padding: 20 }}>
+            {/* Header Skeleton */}
+            <View style={{
+              backgroundColor: '#1E3A8A',
+              borderRadius: 20,
+              padding: 24,
+              marginBottom: 20
+            }}>
+              <SkeletonCard variant="text" width="50%" height={24} style={{ marginBottom: 8 }} />
+              <SkeletonCard variant="text" width="80%" height={16} />
+            </View>
+
+            {/* Chart Skeleton */}
+            <Card style={{ alignItems: 'center', marginBottom: 20 }}>
+              <SkeletonCard variant="chart" height={140} />
+            </Card>
+
+            {/* Monthly Trend Skeleton */}
+            <Card style={{ marginBottom: 20 }}>
+              <SkeletonCard variant="text" width="40%" height={18} style={{ marginBottom: 16 }} />
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 120 }}>
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <View key={i} style={{ alignItems: 'center', flex: 1 }}>
+                    <SkeletonCard variant="bar" width={24} height={Math.random() * 60 + 40} style={{ marginBottom: 8 }} />
+                    <SkeletonCard variant="text" width={30} height={12} style={{ marginBottom: 4 }} />
+                    <SkeletonCard variant="text" width={25} height={10} />
+                  </View>
+                ))}
+              </View>
+            </Card>
+
+            {/* Summary Stats Skeleton */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+              {[1, 2, 3].map((i) => (
+                <Card key={i} style={{ flex: 1, marginHorizontal: i === 2 ? 4 : (i === 1 ? 0 : 8), alignItems: 'center' }}>
+                  <SkeletonCard variant="text" width="50%" height={24} style={{ marginBottom: 8 }} />
+                  <SkeletonCard variant="text" width="60%" height={12} />
+                </Card>
+              ))}
+            </View>
+
+            {/* Recent Absences Skeleton */}
+            <Card>
+              <SkeletonCard variant="text" width="40%" height={18} style={{ marginBottom: 16 }} />
+              {[1, 2, 3].map((i) => (
+                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: i < 3 ? 1 : 0, borderBottomColor: '#E5E7EB' }}>
+                  <SkeletonCard variant="avatar" height={8} style={{ marginRight: 12 }} />
+                  <View style={{ flex: 1 }}>
+                    <SkeletonCard variant="text" width="70%" height={14} style={{ marginBottom: 4 }} />
+                    <SkeletonCard variant="text" width="50%" height={12} />
+                  </View>
+                </View>
+              ))}
+            </Card>
+          </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
