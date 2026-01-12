@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/useAppStore';
 import { Card } from '../components/Card';
+import { SkeletonCard } from '@/components/SkeletonCard';
 import mockDashboard from '../data/mockDashboard.json';
 import { DashboardData } from '../types';
 
@@ -33,10 +34,64 @@ export const DashboardScreen: React.FC = () => {
     }, 1000);
   };
 
-  if (!dashboardData) {
+  if (isLoading || !dashboardData) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6' }}>
-        <Text style={{ fontSize: 18, color: '#6B7280' }}>Loading...</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+        <ScrollView style={{ flex: 1 }}>
+          <View style={{ padding: 20 }}>
+            {/* Welcome Header Skeleton */}
+            <View style={{
+              backgroundColor: '#1E3A8A',
+              borderRadius: 20,
+              padding: 24,
+              marginBottom: 20
+            }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <SkeletonCard variant="avatar" height={60} style={{ marginRight: 16 }} />
+                <View style={{ flex: 1 }}>
+                  <SkeletonCard variant="text" width="70%" height={24} style={{ marginBottom: 8 }} />
+                  <SkeletonCard variant="text" width="50%" height={16} />
+                </View>
+              </View>
+            </View>
+
+            {/* Quick Stats Skeleton */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+              <Card style={{ flex: 1, marginRight: 8 }}>
+                <SkeletonCard variant="text" width="60%" height={32} style={{ alignSelf: 'center', marginBottom: 8 }} />
+                <SkeletonCard variant="text" width="40%" height={14} style={{ alignSelf: 'center' }} />
+              </Card>
+              <Card style={{ flex: 1, marginLeft: 8 }}>
+                <SkeletonCard variant="text" width="60%" height={32} style={{ alignSelf: 'center', marginBottom: 8 }} />
+                <SkeletonCard variant="text" width="50%" height={14} style={{ alignSelf: 'center' }} />
+              </Card>
+            </View>
+
+            {/* Quick Stats Grid Skeleton */}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 20 }}>
+              {[1, 2].map((i) => (
+                <Card key={i} style={{ width: '48%', marginBottom: 12 }}>
+                  <SkeletonCard variant="text" width="50%" height={20} style={{ alignSelf: 'center', marginBottom: 8 }} />
+                  <SkeletonCard variant="text" width="60%" height={12} style={{ alignSelf: 'center' }} />
+                </Card>
+              ))}
+            </View>
+
+            {/* Recent Activity Skeleton */}
+            <Card>
+              <SkeletonCard variant="text" width="40%" height={18} style={{ marginBottom: 16 }} />
+              {[1, 2, 3].map((i) => (
+                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: i < 3 ? 1 : 0, borderBottomColor: '#E5E7EB' }}>
+                  <SkeletonCard variant="avatar" height={8} style={{ marginRight: 12 }} />
+                  <View style={{ flex: 1 }}>
+                    <SkeletonCard variant="text" width="80%" height={14} style={{ marginBottom: 4 }} />
+                    <SkeletonCard variant="text" width="50%" height={12} />
+                  </View>
+                </View>
+              ))}
+            </Card>
+          </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
