@@ -12,9 +12,12 @@ import { useAppStore } from '../store/useAppStore';
 import { GradeItem } from '../components/GradeItem';
 import { Card } from '../components/Card';
 import { ErrorDisplay } from '../components/ErrorDisplay';
+import { OfflineIndicator } from '../components/OfflineIndicator';
 import { IconLoader } from '../components/IconLoader';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import { getErrorType, getErrorMessage } from '../utils/errorHandling';
+import { loadGradesData as loadCachedGrades } from '../utils/storage';
+import { isOnline } from '../utils/network';
 import mockGrades from '../data/mockGrades.json';
 import { Grade } from '../types';
 
@@ -38,18 +41,55 @@ export const GradesScreen: React.FC = () => {
     setLoading,
     error,
     setError,
-    clearError
+    clearError,
+    isOffline,
+    loadCachedData
   } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'subject' | 'grade' | 'percentage'>('subject');
 
-  const fetchData = async () => {
+  const fetchData = async (forceRefresh = false) => {
     try {
       setLoading(true);
       clearError();
+
+      // Check if online
+      const online = await isOnline();
+
+      // If offline and we have cached data, use it
+      if (!online && !forceRefresh) {
+        const cachedData = await loadCachedGrades();
+        if (cachedData && cachedData.length > 0) {
+          setGradesData(cachedData);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // If offline and no cache, show error
+      if (!online && !forceRefresh) {
+        setError({
+          message: 'No internet connection and no cached data available',
+          type: 'network'
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Fetch fresh data when online
       const data = await loadGradesData();
       setGradesData(data);
     } catch (err) {
+      // If fetch fails and we're offline, try to load from cache
+      if (isOffline) {
+        const cachedData = await loadCachedGrades();
+        if (cachedData && cachedData.length > 0) {
+          setGradesData(cachedData);
+          setLoading(false);
+          return;
+        }
+      }
+
       setError({
         message: getErrorMessage(err, 'Failed to load grades data'),
         type: getErrorType(err)
@@ -60,11 +100,16 @@ export const GradesScreen: React.FC = () => {
   };
 
   useEffect(() => {
+    // Load cached data first if no data exists
+    if (gradesData.length === 0) {
+      loadCachedData();
+    }
+    // Always try to fetch fresh data (will use cache if offline)
     fetchData();
-  }, [setGradesData, setLoading, setError, clearError]);
+  }, []);
 
   const onRefresh = () => {
-    fetchData();
+    fetchData(true);
   };
 
   const filteredAndSortedGrades = useMemo(() => {
@@ -163,6 +208,7 @@ export const GradesScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+      <OfflineIndicator isOffline={isOffline} />
       {/* Header with GPA */}
       <View
         style={{
@@ -257,7 +303,7 @@ export const GradesScreen: React.FC = () => {
             refreshing={isLoading}
             onRefresh={onRefresh}
             accessibilityLabel="Pull to refresh grades"
-            accessibilityHint="Pull down to refresh grades data"
+            accessibilityHint={isOffline ? "You are offline. Pull to refresh will use cached data." : "Pull down to refresh grades data"}
           />
         }
       >

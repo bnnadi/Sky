@@ -11,9 +11,12 @@ import { useAppStore } from '../store/useAppStore';
 import { AttendanceChart } from '../components/AttendanceChart';
 import { Card } from '../components/Card';
 import { ErrorDisplay } from '../components/ErrorDisplay';
+import { OfflineIndicator } from '../components/OfflineIndicator';
 import { IconLoader } from '../components/IconLoader';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import { getErrorType, getErrorMessage } from '../utils/errorHandling';
+import { loadAttendanceData as loadCachedAttendance } from '../utils/storage';
+import { isOnline } from '../utils/network';
 import mockAttendance from '../data/mockAttendance.json';
 import { AttendanceData } from '../types';
 
@@ -37,7 +40,9 @@ export const AttendanceScreen: React.FC = () => {
     setLoading,
     error,
     setError,
-    clearError
+    clearError,
+    isOffline,
+    loadCachedData
   } = useAppStore();
 
   // Generate stable random heights for skeleton bars (only recalculated when component mounts)
@@ -45,13 +50,48 @@ export const AttendanceScreen: React.FC = () => {
     return [1, 2, 3, 4, 5, 6].map(() => Math.random() * 60 + 40);
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = async (forceRefresh = false) => {
     try {
       setLoading(true);
       clearError();
+
+      // Check if online
+      const online = await isOnline();
+
+      // If offline and we have cached data, use it
+      if (!online && !forceRefresh) {
+        const cachedData = await loadCachedAttendance();
+        if (cachedData) {
+          setAttendanceData(cachedData);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // If offline and no cache, show error
+      if (!online && !forceRefresh) {
+        setError({
+          message: 'No internet connection and no cached data available',
+          type: 'network'
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Fetch fresh data when online
       const data = await loadAttendanceData();
       setAttendanceData(data);
     } catch (err) {
+      // If fetch fails and we're offline, try to load from cache
+      if (isOffline) {
+        const cachedData = await loadCachedAttendance();
+        if (cachedData) {
+          setAttendanceData(cachedData);
+          setLoading(false);
+          return;
+        }
+      }
+
       setError({
         message: getErrorMessage(err, 'Failed to load attendance data'),
         type: getErrorType(err)
@@ -62,11 +102,16 @@ export const AttendanceScreen: React.FC = () => {
   };
 
   useEffect(() => {
+    // Load cached data first if no data exists
+    if (!attendanceData) {
+      loadCachedData();
+    }
+    // Always try to fetch fresh data (will use cache if offline)
     fetchData();
-  }, [setAttendanceData, setLoading, setError, clearError]);
+  }, []);
 
   const onRefresh = () => {
-    fetchData();
+    fetchData(true);
   };
 
   // Show error state if there's an error and no data
@@ -154,6 +199,7 @@ export const AttendanceScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+      <OfflineIndicator isOffline={isOffline} />
       <ScrollView
         style={{ flex: 1 }}
         accessibilityLabel="Attendance screen"
@@ -163,7 +209,7 @@ export const AttendanceScreen: React.FC = () => {
             refreshing={isLoading}
             onRefresh={onRefresh}
             accessibilityLabel="Pull to refresh attendance"
-            accessibilityHint="Pull down to refresh attendance data"
+            accessibilityHint={isOffline ? "You are offline. Pull to refresh will use cached data." : "Pull down to refresh attendance data"}
           />
         }
       >

@@ -10,8 +10,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/useAppStore';
 import { Card } from '../components/Card';
 import { ErrorDisplay } from '../components/ErrorDisplay';
+import { OfflineIndicator } from '../components/OfflineIndicator';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import { getErrorType, getErrorMessage } from '../utils/errorHandling';
+import { loadDashboardData as loadCachedDashboard } from '../utils/storage';
+import { isOnline } from '../utils/network';
 import mockDashboard from '../data/mockDashboard.json';
 import { DashboardData } from '../types';
 
@@ -35,16 +38,53 @@ export const DashboardScreen: React.FC = () => {
     setLoading,
     error,
     setError,
-    clearError
+    clearError,
+    isOffline,
+    loadCachedData
   } = useAppStore();
 
-  const fetchData = async () => {
+  const fetchData = async (forceRefresh = false) => {
     try {
       setLoading(true);
       clearError();
+
+      // Check if online
+      const online = await isOnline();
+
+      // If offline and we have cached data, use it
+      if (!online && !forceRefresh) {
+        const cachedData = await loadCachedDashboard();
+        if (cachedData) {
+          setDashboardData(cachedData);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // If offline and no cache, show error
+      if (!online && !forceRefresh) {
+        setError({
+          message: 'No internet connection and no cached data available',
+          type: 'network'
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Fetch fresh data when online
       const data = await loadDashboardData();
       setDashboardData(data);
     } catch (err) {
+      // If fetch fails and we're offline, try to load from cache
+      if (isOffline) {
+        const cachedData = await loadCachedDashboard();
+        if (cachedData) {
+          setDashboardData(cachedData);
+          setLoading(false);
+          return;
+        }
+      }
+
       setError({
         message: getErrorMessage(err, 'Failed to load dashboard data'),
         type: getErrorType(err)
@@ -55,8 +95,13 @@ export const DashboardScreen: React.FC = () => {
   };
 
   useEffect(() => {
+    // Load cached data first if no data exists
+    if (!dashboardData) {
+      loadCachedData();
+    }
+    // Always try to fetch fresh data (will use cache if offline)
     fetchData();
-  }, [setDashboardData, setLoading, setError, clearError]);
+  }, []);
 
   const onRefresh = () => {
     fetchData();
@@ -145,6 +190,7 @@ export const DashboardScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+      <OfflineIndicator isOffline={isOffline} />
       <ScrollView
         style={{ flex: 1 }}
         accessibilityLabel="Dashboard"
@@ -152,7 +198,7 @@ export const DashboardScreen: React.FC = () => {
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
-            onRefresh={onRefresh}
+            onRefresh={() => fetchData(true)}
             accessibilityLabel="Pull to refresh dashboard"
             accessibilityHint="Pull down to refresh dashboard data"
           />
