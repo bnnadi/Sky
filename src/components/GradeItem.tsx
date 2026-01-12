@@ -15,8 +15,9 @@ export const GradeItem: React.FC<GradeItemProps> = ({ grade, onPress }) => {
     <TouchableOpacity
       onPress={onPress}
       accessible={true}
-      accessibilityRole='button'
+      accessibilityRole="button"
       accessibilityLabel={`${grade.subject}, Grade: ${grade.grade}, ${grade.percentage} percent, taught by ${grade.teacher}`}
+      accessibilityHint={onPress ? "Double tap to view grade details" : undefined}
       style={{
         backgroundColor: '#FFFFFF',
         borderRadius: 12,

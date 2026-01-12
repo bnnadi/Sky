@@ -26,7 +26,9 @@ export const AttendanceChart: React.FC<AttendanceChartProps> = ({
     <View
       style={{ alignItems: 'center' }}
       accessible={true}
-      accessibilityLabel={`Attendance: ${summary.attendancePercentage} percent. ${summary.present} days present, ${summary.absent} days absent, ${summary.late} days late`}
+      accessibilityRole="image"
+      accessibilityLabel={`Attendance chart showing ${summary.attendancePercentage} percent attendance. ${summary.present} days present, ${summary.absent} days absent, ${summary.late} days late out of ${summary.totalDays} total days`}
+      accessibilityHint="Visual representation of attendance statistics"
     >
       <Svg width={size} height={size}>
         {/* Background circle */}

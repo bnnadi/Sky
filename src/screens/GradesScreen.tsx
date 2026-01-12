@@ -164,10 +164,15 @@ export const GradesScreen: React.FC = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
       {/* Header with GPA */}
-      <View style={{
-        backgroundColor: '#1E3A8A',
-        padding: 20
-      }}>
+      <View
+        style={{
+          backgroundColor: '#1E3A8A',
+          padding: 20
+        }}
+        accessible={true}
+        accessibilityRole="header"
+        accessibilityLabel={`Grades screen. Current Grade Point Average: ${gpa}`}
+      >
         <Text style={{
           fontSize: 24,
           fontWeight: '700',
@@ -199,6 +204,9 @@ export const GradesScreen: React.FC = () => {
           placeholder="Search subjects or teachers..."
           value={searchQuery}
           onChangeText={setSearchQuery}
+          accessibilityLabel="Search grades"
+          accessibilityHint="Enter subject name or teacher name to filter grades"
+          accessibilityRole="searchbox"
         />
 
         {/* Sort Options */}
@@ -210,6 +218,11 @@ export const GradesScreen: React.FC = () => {
             <TouchableOpacity
               key={option}
               onPress={() => setSortBy(option)}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`Sort by ${option}`}
+              accessibilityState={{ selected: sortBy === option }}
+              accessibilityHint={sortBy === option ? `Currently sorting by ${option}. Double tap to change sort order` : `Double tap to sort grades by ${option}`}
               style={{
                 backgroundColor: sortBy === option ? '#3B82F6' : '#FFFFFF',
                 paddingHorizontal: 16,
@@ -237,8 +250,15 @@ export const GradesScreen: React.FC = () => {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 20, paddingTop: 0 }}
+        accessibilityLabel="Grades list"
+        accessibilityRole="list"
         refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={onRefresh}
+            accessibilityLabel="Pull to refresh grades"
+            accessibilityHint="Pull down to refresh grades data"
+          />
         }
       >
         {filteredAndSortedGrades.map((grade) => (
@@ -253,7 +273,11 @@ export const GradesScreen: React.FC = () => {
         ))}
 
         {filteredAndSortedGrades.length === 0 && (
-          <Card style={{ alignItems: 'center', paddingVertical: 32 }}>
+          <Card
+            style={{ alignItems: 'center', paddingVertical: 32 }}
+            accessibilityLabel="No grades found. Try adjusting your search term."
+            accessibilityRole="text"
+          >
             <IconLoader name="SearchNormal" size={48} color="#9CA3AF" variant="Outline" />
             <Text style={{
               textAlign: 'center',

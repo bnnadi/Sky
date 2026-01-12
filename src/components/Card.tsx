@@ -7,19 +7,29 @@ interface CardProps {
   onPress?: () => void;
   style?: ViewStyle;
   className?: string;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityRole?: 'button' | 'none' | 'text';
 }
 
 export const Card: React.FC<CardProps> = ({
   children,
   onPress,
   style,
-  className = ''
+  className = '',
+  accessibilityLabel,
+  accessibilityHint,
+  accessibilityRole = onPress ? 'button' : 'none'
 }) => {
   const CardComponent = onPress ? TouchableOpacity : View;
 
   return (
-    <TouchableOpacity
+    <CardComponent
       onPress={onPress}
+      accessible={!!accessibilityLabel || !!onPress}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      accessibilityRole={accessibilityRole}
       style={[
         {
           backgroundColor: colors.surface,
@@ -38,7 +48,7 @@ export const Card: React.FC<CardProps> = ({
       ]}
     >
       {children}
-    </TouchableOpacity>
+    </CardComponent>
   );
 };
 

@@ -156,18 +156,30 @@ export const AttendanceScreen: React.FC = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
       <ScrollView
         style={{ flex: 1 }}
+        accessibilityLabel="Attendance screen"
+        accessibilityRole="none"
         refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={onRefresh}
+            accessibilityLabel="Pull to refresh attendance"
+            accessibilityHint="Pull down to refresh attendance data"
+          />
         }
       >
         <View style={{ padding: 20 }}>
         {/* Header */}
-        <View style={{
-          backgroundColor: '#1E3A8A',
-          borderRadius: 20,
-          padding: 24,
-          marginBottom: 20
-        }}>
+        <View
+          style={{
+            backgroundColor: '#1E3A8A',
+            borderRadius: 20,
+            padding: 24,
+            marginBottom: 20
+          }}
+          accessible={true}
+          accessibilityRole="header"
+          accessibilityLabel={`Attendance Overview. ${trendMessage}`}
+        >
           <Text style={{
             fontSize: 24,
             fontWeight: '700',
@@ -190,7 +202,11 @@ export const AttendanceScreen: React.FC = () => {
         </Card>
 
         {/* Monthly Trend */}
-        <Card style={{ marginBottom: 20 }}>
+        <Card
+          style={{ marginBottom: 20 }}
+          accessibilityLabel="Monthly attendance trend"
+          accessibilityRole="none"
+        >
           <Text style={{
             fontSize: 18,
             fontWeight: '600',
@@ -200,14 +216,25 @@ export const AttendanceScreen: React.FC = () => {
             Monthly Trend
           </Text>
 
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            height: 120
-          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+              height: 120
+            }}
+            accessible={true}
+            accessibilityRole="list"
+            accessibilityLabel={`Monthly attendance trend: ${monthlyTrend.map(m => `${m.month} ${m.percentage} percent`).join(', ')}`}
+          >
             {monthlyTrend.map((month) => (
-              <View key={month.month} style={{ alignItems: 'center', flex: 1 }}>
+              <View
+                key={month.month}
+                style={{ alignItems: 'center', flex: 1 }}
+                accessible={true}
+                accessibilityLabel={`${month.month}: ${month.percentage} percent attendance`}
+                accessibilityRole="text"
+              >
                 <View style={{
                   backgroundColor: '#3B82F6',
                   width: 24,
@@ -239,7 +266,11 @@ export const AttendanceScreen: React.FC = () => {
           justifyContent: 'space-between',
           marginBottom: 20
         }}>
-          <Card style={{ flex: 1, marginRight: 8, alignItems: 'center' }}>
+          <Card
+            style={{ flex: 1, marginRight: 8, alignItems: 'center' }}
+            accessibilityLabel={`Days Present: ${summary.present}`}
+            accessibilityRole="text"
+          >
             <Text style={{
               fontSize: 24,
               fontWeight: '700',
@@ -256,7 +287,11 @@ export const AttendanceScreen: React.FC = () => {
             </Text>
           </Card>
 
-          <Card style={{ flex: 1, marginHorizontal: 4, alignItems: 'center' }}>
+          <Card
+            style={{ flex: 1, marginHorizontal: 4, alignItems: 'center' }}
+            accessibilityLabel={`Days Absent: ${summary.absent}`}
+            accessibilityRole="text"
+          >
             <Text style={{
               fontSize: 24,
               fontWeight: '700',
@@ -273,7 +308,11 @@ export const AttendanceScreen: React.FC = () => {
             </Text>
           </Card>
 
-          <Card style={{ flex: 1, marginLeft: 8, alignItems: 'center' }}>
+          <Card
+            style={{ flex: 1, marginLeft: 8, alignItems: 'center' }}
+            accessibilityLabel={`Days Late: ${summary.late}`}
+            accessibilityRole="text"
+          >
             <Text style={{
               fontSize: 24,
               fontWeight: '700',
@@ -293,7 +332,7 @@ export const AttendanceScreen: React.FC = () => {
 
         {/* Recent Absences */}
         {recentAbsences.length > 0 && (
-          <Card>
+          <Card accessibilityLabel="Recent Absences">
             <Text style={{
               fontSize: 18,
               fontWeight: '600',
@@ -306,6 +345,9 @@ export const AttendanceScreen: React.FC = () => {
             {recentAbsences.map((absence, index) => (
               <View
                 key={index}
+                accessible={true}
+                accessibilityLabel={`${absence.subject} on ${new Date(absence.date).toLocaleDateString()}. ${absence.reason}. ${absence.excused ? 'Excused' : 'Unexcused'}`}
+                accessibilityRole="text"
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
