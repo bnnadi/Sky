@@ -13,25 +13,17 @@ import { Card } from '../components/Card';
 import { ErrorDisplay } from '../components/ErrorDisplay';
 import { IconLoader } from '../components/IconLoader';
 import { SkeletonCard } from '@/components/SkeletonCard';
+import { getErrorType, getErrorMessage } from '../utils/errorHandling';
 import mockAttendance from '../data/mockAttendance.json';
 import { AttendanceData } from '../types';
-
-// Helper function to simulate network errors (for testing)
-const shouldSimulateError = () => {
-  return false; // Set to true to test error handling
-};
 
 const loadAttendanceData = async (): Promise<AttendanceData> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (shouldSimulateError()) {
-        reject(new Error('Network request failed'));
-      } else {
-        try {
-          resolve(mockAttendance as AttendanceData);
-        } catch (error) {
-          reject(error);
-        }
+      try {
+        resolve(mockAttendance as AttendanceData);
+      } catch (error) {
+        reject(new Error('Failed to load attendance data'));
       }
     }, 1000);
   });
@@ -60,10 +52,9 @@ export const AttendanceScreen: React.FC = () => {
       const data = await loadAttendanceData();
       setAttendanceData(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load attendance data';
       setError({
-        message: errorMessage,
-        type: errorMessage.toLowerCase().includes('network') ? 'network' : 'data'
+        message: getErrorMessage(err, 'Failed to load attendance data'),
+        type: getErrorType(err)
       });
     } finally {
       setLoading(false);

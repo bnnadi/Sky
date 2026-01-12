@@ -14,25 +14,17 @@ import { Card } from '../components/Card';
 import { ErrorDisplay } from '../components/ErrorDisplay';
 import { IconLoader } from '../components/IconLoader';
 import { SkeletonCard } from '@/components/SkeletonCard';
+import { getErrorType, getErrorMessage } from '../utils/errorHandling';
 import mockGrades from '../data/mockGrades.json';
 import { Grade } from '../types';
-
-// Helper function to simulate network errors (for testing)
-const shouldSimulateError = () => {
-  return false; // Set to true to test error handling
-};
 
 const loadGradesData = async (): Promise<Grade[]> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (shouldSimulateError()) {
-        reject(new Error('Network request failed'));
-      } else {
-        try {
-          resolve(mockGrades as Grade[]);
-        } catch (error) {
-          reject(error);
-        }
+      try {
+        resolve(mockGrades as Grade[]);
+      } catch (error) {
+        reject(new Error('Failed to load grades data'));
       }
     }, 1000);
   });
@@ -58,10 +50,9 @@ export const GradesScreen: React.FC = () => {
       const data = await loadGradesData();
       setGradesData(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load grades data';
       setError({
-        message: errorMessage,
-        type: errorMessage.toLowerCase().includes('network') ? 'network' : 'data'
+        message: getErrorMessage(err, 'Failed to load grades data'),
+        type: getErrorType(err)
       });
     } finally {
       setLoading(false);
