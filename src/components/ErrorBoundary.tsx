@@ -12,6 +12,7 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  resetKey: number;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -20,13 +21,15 @@ export class ErrorBoundary extends Component<Props, State> {
     this.state = {
       hasError: false,
       error: null,
+      resetKey: 0,
     };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return {
       hasError: true,
       error,
+      // resetKey is preserved from current state
     };
   }
 
@@ -39,10 +42,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
-    this.setState({
+    // Reset error state and increment resetKey to force remount of children
+    // This ensures a clean state recovery after an error
+    this.setState((prevState) => ({
       hasError: false,
       error: null,
-    });
+      resetKey: prevState.resetKey + 1,
+    }));
   };
 
   render() {
@@ -65,7 +71,9 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    // Use resetKey to force remount after error recovery
+    // This ensures components start fresh after an error boundary reset
+    return <React.Fragment key={this.state.resetKey}>{this.props.children}</React.Fragment>;
   }
 }
 

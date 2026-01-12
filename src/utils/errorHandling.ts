@@ -9,12 +9,19 @@ export const getErrorType = (error: unknown): ErrorType => {
   if (error instanceof Error) {
     // Check error name for network-related errors
     const errorName = error.name?.toLowerCase() || '';
+    const errorMessage = error.message?.toLowerCase() || '';
+
     if (
       errorName.includes('network') ||
       errorName.includes('timeout') ||
       errorName.includes('fetch') ||
       errorName === 'networkerror' ||
-      errorName === 'typeerror'
+      // Only classify TypeError as network if it's related to fetch/network operations
+      (errorName === 'typeerror' && (
+        errorMessage.includes('fetch') ||
+        errorMessage.includes('network') ||
+        errorMessage.includes('connection')
+      ))
     ) {
       return 'network';
     }
@@ -31,8 +38,7 @@ export const getErrorType = (error: unknown): ErrorType => {
       return 'network';
     }
 
-    // Check message as fallback
-    const errorMessage = error.message?.toLowerCase() || '';
+    // Check message as fallback (errorMessage already declared above)
     if (
       errorMessage.includes('network') ||
       errorMessage.includes('connection') ||
