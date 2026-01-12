@@ -9,30 +9,85 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/useAppStore';
 import { Card } from '../components/Card';
+import { ErrorDisplay } from '../components/ErrorDisplay';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import mockDashboard from '../data/mockDashboard.json';
 import { DashboardData } from '../types';
 
+// Helper function to simulate network errors (for testing)
+const shouldSimulateError = () => {
+  // In production, remove this or make it configurable
+  return false; // Set to true to test error handling
+};
+
+const loadDashboardData = async (): Promise<DashboardData> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (shouldSimulateError()) {
+        reject(new Error('Network request failed'));
+      } else {
+        try {
+          resolve(mockDashboard as DashboardData);
+        } catch (error) {
+          reject(error);
+        }
+      }
+    }, 1000);
+  });
+};
+
 export const DashboardScreen: React.FC = () => {
-  const { dashboardData, setDashboardData, isLoading, setLoading } = useAppStore();
+  const {
+    dashboardData,
+    setDashboardData,
+    isLoading,
+    setLoading,
+    error,
+    setError,
+    clearError
+  } = useAppStore();
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      clearError();
+      const data = await loadDashboardData();
+      setDashboardData(data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load dashboard data';
+      setError({
+        message: errorMessage,
+        type: errorMessage.toLowerCase().includes('network') ? 'network' : 'data'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Simulate loading data
-    setLoading(true);
-     const timer = setTimeout(() => {
-      setDashboardData(mockDashboard as DashboardData);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer)
-  }, [setDashboardData, setLoading]);
+    fetchData();
+  }, [setDashboardData, setLoading, setError, clearError]);
 
   const onRefresh = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setDashboardData(mockDashboard as DashboardData);
-      setLoading(false);
-    }, 1000);
+    fetchData();
   };
+
+  // Show error state if there's an error and no data
+  if (error && !dashboardData && !isLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <ErrorDisplay
+              message={error.message}
+              type={error.type}
+              onRetry={onRefresh}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
 
   if (isLoading || !dashboardData) {
     return (
