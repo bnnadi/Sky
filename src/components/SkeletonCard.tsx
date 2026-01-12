@@ -20,9 +20,18 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
   style
 }) => {
   const shimmerAnim = useRef(new Animated.Value(0)).current;
+  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+
+  // Store interpolated value in ref to ensure it's created only once and maintains animation connection
+  const shimmerOpacity = useRef(
+    shimmerAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0.3, 0.7],
+    })
+  ).current;
 
   useEffect(() => {
-    Animated.loop(
+    animationRef.current = Animated.loop(
       Animated.sequence([
         Animated.timing(shimmerAnim, {
           toValue: 1,
@@ -35,25 +44,47 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
           useNativeDriver: true,
         }),
       ])
-    ).start();
-  }, []);
+    );
+    animationRef.current.start();
 
-  const shimmerOpacity = shimmerAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.3, 0.7],
-  });
+    // Cleanup: stop animation when component unmounts
+    return () => {
+      if (animationRef.current) {
+        animationRef.current.stop();
+        animationRef.current = null;
+      }
+    };
+  }, [shimmerAnim]);
 
   // Variant-specific dimensions
   const getVariantStyles = () => {
     switch (variant) {
-      case 'avatar':
-        return { width: height || 60, height: height || 60, borderRadius: (height || 60) / 2 };
+      case 'avatar': {
+        // If width is explicitly provided (not default '100%'), don't set width here to let prop take precedence
+        // Otherwise, use height for both dimensions to maintain square/circular shape
+        const size = height || 60;
+        const borderRadius = size / 2;
+        if (width !== '100%' && width) {
+          // Width prop will be used from the style array, only set height and borderRadius
+          return { height: size, borderRadius };
+        }
+        return { width: size, height: size, borderRadius };
+      }
       case 'text':
-        return { height: 16, borderRadius: 4 };
+        return { height: height || 16, borderRadius: 4 };
       case 'bar':
         return { height: height || 80, borderRadius: 4 };
-      case 'chart':
-        return { width: height || 140, height: height || 140, borderRadius: (height || 140) / 2 };
+      case 'chart': {
+        // If width is explicitly provided (not default '100%'), don't set width here to let prop take precedence
+        // Otherwise, use height for both dimensions to maintain square/circular shape
+        const size = height || 140;
+        const borderRadius = size / 2;
+        if (width !== '100%' && width) {
+          // Width prop will be used from the style array, only set height and borderRadius
+          return { height: size, borderRadius };
+        }
+        return { width: size, height: size, borderRadius };
+      }
       default:
         return { height: height || 80, borderRadius: 12 };
     }
@@ -69,7 +100,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
               {
                 backgroundColor: '#E5E7EB',
                 width: i === lines - 1 ? '80%' : '100%',
-                height: 16,
+                height: height || 16,
                 borderRadius: 4,
                 marginBottom: i < lines - 1 ? 8 : 0,
                 opacity: shimmerOpacity,

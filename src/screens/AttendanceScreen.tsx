@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,11 @@ import { AttendanceData } from '../types';
 
 export const AttendanceScreen: React.FC = () => {
   const { attendanceData, setAttendanceData, isLoading, setLoading } = useAppStore();
+
+  // Generate stable random heights for skeleton bars (only recalculated when component mounts)
+  const skeletonBarHeights = useMemo(() => {
+    return [1, 2, 3, 4, 5, 6].map(() => Math.random() * 60 + 40);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -62,7 +67,7 @@ export const AttendanceScreen: React.FC = () => {
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 120 }}>
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <View key={i} style={{ alignItems: 'center', flex: 1 }}>
-                    <SkeletonCard variant="bar" width={24} height={Math.random() * 60 + 40} style={{ marginBottom: 8 }} />
+                    <SkeletonCard variant="bar" width={24} height={skeletonBarHeights[i - 1]} style={{ marginBottom: 8 }} />
                     <SkeletonCard variant="text" width={30} height={12} style={{ marginBottom: 4 }} />
                     <SkeletonCard variant="text" width={25} height={10} />
                   </View>
