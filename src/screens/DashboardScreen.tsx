@@ -147,18 +147,30 @@ export const DashboardScreen: React.FC = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
       <ScrollView
         style={{ flex: 1 }}
+        accessibilityLabel="Dashboard"
+        accessibilityRole="none"
         refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={onRefresh}
+            accessibilityLabel="Pull to refresh dashboard"
+            accessibilityHint="Pull down to refresh dashboard data"
+          />
         }
       >
         <View style={{ padding: 20 }}>
         {/* Welcome Header */}
-        <View style={{
-          backgroundColor: '#1E3A8A',
-          borderRadius: 20,
-          padding: 24,
-          marginBottom: 20
-        }}>
+        <View
+          style={{
+            backgroundColor: '#1E3A8A',
+            borderRadius: 20,
+            padding: 24,
+            marginBottom: 20
+          }}
+          accessible={true}
+          accessibilityRole="header"
+          accessibilityLabel={`Welcome back, ${student.name}. ${student.grade}`}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
             <Image
               source={{ uri: student.avatar }}
@@ -168,6 +180,9 @@ export const DashboardScreen: React.FC = () => {
                 borderRadius: 30,
                 marginRight: 16
               }}
+              accessible={true}
+              accessibilityLabel={`${student.name} profile picture`}
+              accessibilityRole="image"
             />
             <View style={{ flex: 1 }}>
               <Text style={{
@@ -194,7 +209,11 @@ export const DashboardScreen: React.FC = () => {
           justifyContent: 'space-between',
           marginBottom: 20
         }}>
-          <Card style={{ flex: 1, marginRight: 8 }}>
+          <Card
+            style={{ flex: 1, marginRight: 8 }}
+            accessibilityLabel={`Grade Point Average: ${student.gpa}`}
+            accessibilityRole="text"
+          >
             <Text style={{
               fontSize: 32,
               fontWeight: '700',
@@ -212,7 +231,11 @@ export const DashboardScreen: React.FC = () => {
             </Text>
           </Card>
 
-          <Card style={{ flex: 1, marginLeft: 8 }}>
+          <Card
+            style={{ flex: 1, marginLeft: 8 }}
+            accessibilityLabel={`Attendance: ${student.attendancePercentage} percent`}
+            accessibilityRole="text"
+          >
             <Text style={{
               fontSize: 32,
               fontWeight: '700',
@@ -238,7 +261,11 @@ export const DashboardScreen: React.FC = () => {
           justifyContent: 'space-between',
           marginBottom: 20
         }}>
-          <Card style={{ width: '48%', marginBottom: 12 }}>
+          <Card
+            style={{ width: '48%', marginBottom: 12 }}
+            accessibilityLabel={`Total Classes: ${quickStats.totalClasses}`}
+            accessibilityRole="text"
+          >
             <Text style={{
               fontSize: 20,
               fontWeight: '600',
@@ -256,7 +283,11 @@ export const DashboardScreen: React.FC = () => {
             </Text>
           </Card>
 
-          <Card style={{ width: '48%', marginBottom: 12 }}>
+          <Card
+            style={{ width: '48%', marginBottom: 12 }}
+            accessibilityLabel={`Upcoming Assignments: ${quickStats.upcomingAssignments}`}
+            accessibilityRole="text"
+          >
             <Text style={{
               fontSize: 20,
               fontWeight: '600',
@@ -276,7 +307,7 @@ export const DashboardScreen: React.FC = () => {
         </View>
 
         {/* Recent Activity */}
-        <Card>
+        <Card accessibilityLabel="Recent Activity">
           <Text style={{
             fontSize: 18,
             fontWeight: '600',
@@ -289,6 +320,9 @@ export const DashboardScreen: React.FC = () => {
           {recentActivity.map((activity, index) => (
             <View
               key={index}
+              accessible={true}
+              accessibilityLabel={`${activity.message}. ${activity.timestamp}`}
+              accessibilityRole="text"
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',

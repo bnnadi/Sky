@@ -108,6 +108,8 @@ const MenuTabNavigator: React.FC = () => {
         component={FavoritesScreen}
         options={{
           title: 'Favorites',
+          tabBarAccessibilityLabel: 'Favorites tab',
+          tabBarAccessibilityHint: 'Double tap to view your favorite menu items',
         }}
       />
       <Tab.Screen
@@ -115,6 +117,8 @@ const MenuTabNavigator: React.FC = () => {
         component={RecentScreen}
         options={{
           title: 'Recent',
+          tabBarAccessibilityLabel: 'Recent tab',
+          tabBarAccessibilityHint: 'Double tap to view recently accessed items',
         }}
       />
       <Tab.Screen
@@ -122,6 +126,8 @@ const MenuTabNavigator: React.FC = () => {
         component={FullMenuScreen}
         options={{
           title: 'Full Menu',
+          tabBarAccessibilityLabel: 'Full Menu tab',
+          tabBarAccessibilityHint: 'Double tap to view the complete menu',
         }}
       />
       <Tab.Screen
@@ -129,6 +135,8 @@ const MenuTabNavigator: React.FC = () => {
         component={AccountInfoScreen}
         options={{
           title: 'Account Info',
+          tabBarAccessibilityLabel: 'Account Info tab',
+          tabBarAccessibilityHint: 'Double tap to view account information',
         }}
       />
     </Tab.Navigator>
@@ -145,6 +153,10 @@ const CustomDrawerContent: React.FC<any> = ({ navigation }: any) => {
       <TouchableOpacity
         style={styles.drawerItem}
         onPress={() => navigation.navigate('MenuTabs')}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel="Open Menu"
+        accessibilityHint="Double tap to open the main menu"
       >
         <Text style={styles.drawerItemText}>Open Menu</Text>
       </TouchableOpacity>

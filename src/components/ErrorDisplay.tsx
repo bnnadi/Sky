@@ -46,16 +46,41 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   const errorIcon = getErrorIcon(type);
 
   return (
-    <Card style={styles.container}>
+    <Card
+      style={styles.container}
+      accessibilityLabel={`Error: ${errorMessage}`}
+      accessibilityRole="alert"
+    >
       <View style={styles.content}>
-        <Text style={styles.icon}>{errorIcon}</Text>
-        <Text style={styles.title}>Oops! Something went wrong</Text>
-        <Text style={styles.message}>{errorMessage}</Text>
+        <Text
+          style={styles.icon}
+          accessible={false}
+        >
+          {errorIcon}
+        </Text>
+        <Text
+          style={styles.title}
+          accessible={true}
+          accessibilityRole="header"
+        >
+          Oops! Something went wrong
+        </Text>
+        <Text
+          style={styles.message}
+          accessible={true}
+          accessibilityRole="text"
+        >
+          {errorMessage}
+        </Text>
         {onRetry && (
           <TouchableOpacity
             style={styles.retryButton}
             onPress={onRetry}
             activeOpacity={0.7}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={retryLabel}
+            accessibilityHint="Double tap to retry loading the data"
           >
             <Text style={styles.retryButtonText}>{retryLabel}</Text>
           </TouchableOpacity>
