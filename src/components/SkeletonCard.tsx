@@ -1,5 +1,5 @@
 // Enhanced SkeletonCard with variants and shimmer
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { View, Animated, DimensionValue } from 'react-native';
 
 type SkeletonVariant = 'card' | 'listItem' | 'chart' | 'avatar' | 'text' | 'bar';
@@ -56,8 +56,8 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
     };
   }, [shimmerAnim]);
 
-  // Variant-specific dimensions
-  const getVariantStyles = () => {
+  // Variant-specific dimensions - memoized to avoid recalculation on every render
+  const variantStyles = useMemo(() => {
     switch (variant) {
       case 'avatar': {
         // If width is explicitly provided (not default '100%'), don't set width here to let prop take precedence
@@ -85,10 +85,14 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
         }
         return { width: size, height: size, borderRadius };
       }
+      case 'listItem':
+        // List item variant: typically full width with moderate height and rounded corners
+        return { height: height || 60, borderRadius: 8 };
+      case 'card':
       default:
         return { height: height || 80, borderRadius: 12 };
     }
-  };
+  }, [variant, width, height]);
 
   if (variant === 'text' && lines > 1) {
     return (
@@ -105,7 +109,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
                 marginBottom: i < lines - 1 ? 8 : 0,
                 opacity: shimmerOpacity,
               },
-              getVariantStyles(),
+              variantStyles,
             ]}
           />
         ))}
@@ -121,7 +125,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
           width,
           opacity: shimmerOpacity,
         },
-        getVariantStyles(),
+        variantStyles,
         style,
       ]}
     />
