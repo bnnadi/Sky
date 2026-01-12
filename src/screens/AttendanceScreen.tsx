@@ -10,35 +10,81 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/useAppStore';
 import { AttendanceChart } from '../components/AttendanceChart';
 import { Card } from '../components/Card';
+import { ErrorDisplay } from '../components/ErrorDisplay';
 import { IconLoader } from '../components/IconLoader';
 import { SkeletonCard } from '@/components/SkeletonCard';
+import { getErrorType, getErrorMessage } from '../utils/errorHandling';
 import mockAttendance from '../data/mockAttendance.json';
 import { AttendanceData } from '../types';
 
+const loadAttendanceData = async (): Promise<AttendanceData> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve(mockAttendance as AttendanceData);
+      } catch (error) {
+        reject(new Error('Failed to load attendance data'));
+      }
+    }, 1000);
+  });
+};
+
 export const AttendanceScreen: React.FC = () => {
-  const { attendanceData, setAttendanceData, isLoading, setLoading } = useAppStore();
+  const {
+    attendanceData,
+    setAttendanceData,
+    isLoading,
+    setLoading,
+    error,
+    setError,
+    clearError
+  } = useAppStore();
 
   // Generate stable random heights for skeleton bars (only recalculated when component mounts)
   const skeletonBarHeights = useMemo(() => {
     return [1, 2, 3, 4, 5, 6].map(() => Math.random() * 60 + 40);
   }, []);
 
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setAttendanceData(mockAttendance as AttendanceData);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      clearError();
+      const data = await loadAttendanceData();
+      setAttendanceData(data);
+    } catch (err) {
+      setError({
+        message: getErrorMessage(err, 'Failed to load attendance data'),
+        type: getErrorType(err)
+      });
+    } finally {
       setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [setAttendanceData, setLoading]);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [setAttendanceData, setLoading, setError, clearError]);
 
   const onRefresh = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setAttendanceData(mockAttendance as AttendanceData);
-      setLoading(false);
-    }, 1000);
+    fetchData();
   };
+
+  // Show error state if there's an error and no data
+  if (error && !attendanceData && !isLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <ErrorDisplay
+              message={error.message}
+              type={error.type}
+              onRetry={onRefresh}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
 
   if (isLoading || !attendanceData) {
     return (

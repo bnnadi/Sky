@@ -11,31 +11,60 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/useAppStore';
 import { GradeItem } from '../components/GradeItem';
 import { Card } from '../components/Card';
+import { ErrorDisplay } from '../components/ErrorDisplay';
 import { IconLoader } from '../components/IconLoader';
 import { SkeletonCard } from '@/components/SkeletonCard';
+import { getErrorType, getErrorMessage } from '../utils/errorHandling';
 import mockGrades from '../data/mockGrades.json';
 import { Grade } from '../types';
 
+const loadGradesData = async (): Promise<Grade[]> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve(mockGrades as Grade[]);
+      } catch (error) {
+        reject(new Error('Failed to load grades data'));
+      }
+    }, 1000);
+  });
+};
+
 export const GradesScreen: React.FC = () => {
-  const { gradesData, setGradesData, isLoading, setLoading } = useAppStore();
+  const {
+    gradesData,
+    setGradesData,
+    isLoading,
+    setLoading,
+    error,
+    setError,
+    clearError
+  } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'subject' | 'grade' | 'percentage'>('subject');
 
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setGradesData(mockGrades as Grade[]);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      clearError();
+      const data = await loadGradesData();
+      setGradesData(data);
+    } catch (err) {
+      setError({
+        message: getErrorMessage(err, 'Failed to load grades data'),
+        type: getErrorType(err)
+      });
+    } finally {
       setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [setGradesData, setLoading]);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [setGradesData, setLoading, setError, clearError]);
 
   const onRefresh = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setGradesData(mockGrades as Grade[]);
-      setLoading(false);
-    }, 1000);
+    fetchData();
   };
 
   const filteredAndSortedGrades = useMemo(() => {
@@ -68,6 +97,23 @@ export const GradesScreen: React.FC = () => {
     const total = gradesData.reduce((sum, g) => sum + (gradePoints[g.grade] ?? 0), 0)
     return (total / gradesData.length).toFixed(2);
   }, [gradesData]);
+
+  // Show error state if there's an error and no data
+  if (error && gradesData.length === 0 && !isLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#F3F4F6' }} edges={['top']}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <ErrorDisplay
+              message={error.message}
+              type={error.type}
+              onRetry={onRefresh}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
 
   if (isLoading || gradesData.length === 0) {
     return (
